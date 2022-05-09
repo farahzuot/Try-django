@@ -2,6 +2,8 @@ import imp
 from multiprocessing import context
 from django.shortcuts import render
 from articles.models import Article
+from django.contrib.auth.decorators import login_required
+
 # Create your views here.
 
 def article_search_view(request):
@@ -18,7 +20,7 @@ def article_search_view(request):
     }
     return render(request , 'articles/search.html' , context=context)
 
-
+@login_required
 def article_create_view(request, id=None):
     print(request.method)
     article_obj = None
