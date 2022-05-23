@@ -1,11 +1,11 @@
 from operator import mod
 from django.db import models
-from django.utils.text import slugify
+from .utils import slugify_instance_title
 from django.db.models.signals import pre_save, post_save
 # Create your models here.
 class Article(models.Model):
     title = models.CharField(max_length=120)
-    slug = models.SlugField(blank=True , null=True)
+    slug = models.SlugField(unique=True,blank=True , null=True)
     content = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
@@ -16,15 +16,6 @@ class Article(models.Model):
         #     self.slug = slugify(self.title)
         super().save(*args, **kwargs)
 
-def slugify_instance_title(instance, save=False):
-    slug = slugify(instance.title)
-    qs = Article.objects.filter(slug=slug).exclude(id=instance.id)
-    if qs.exists():
-        slug = f'{slug}-{qs.count()+1}'
-    instance.slug = slug
-    if save:
-        instance.save()
-    return instance
 
 def article_pre_save(sender, instance, *args, **kwargs):
     if instance.slug == None:
