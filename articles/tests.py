@@ -2,10 +2,12 @@ from curses import qiflush
 from django.test import TestCase
 from .models import Article
 from django.utils.text import slugify
+from .utils import slugify_instance_title
+
 # Create your tests here.
 class ArticleTestCase(TestCase):
     def setUp(self):
-        self.numbers_of_articles = 5
+        self.numbers_of_articles = 500
         for i in range(0, self.numbers_of_articles):
             Article.objects.create(title='Hello world!', content='this is the content field.')
     
@@ -31,3 +33,19 @@ class ArticleTestCase(TestCase):
             slug = obj.slug
             slugifiedTitle = slugify(title)
             self.assertNotEqual(slug, slugifiedTitle)
+
+    def test_slugify_instance_title(self):
+        instance = Article.objects.all().last()
+        newSlug = []
+        for i in range(0,25):
+            instance = slugify_instance_title(instance, save=False)
+            newSlug.append(instance.slug)
+        uniqueSlug = list(set(newSlug))
+        self.assertEqual(len(newSlug),len(uniqueSlug))
+
+    def test_slugify_instance_redux(self):
+        slug_list = Article.objects.all().values_list('slug', flat=True)
+        uniqueSlug = list(set(slug_list))
+        self.assertEqual(len(slug_list),len(uniqueSlug))
+
+    # def test_user_added_slug_unique(self):
