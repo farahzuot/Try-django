@@ -1,6 +1,6 @@
 import imp
 from multiprocessing import context
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from django.http import Http404
 from articles.models import Article
 from django.contrib.auth.decorators import login_required
@@ -28,6 +28,7 @@ def article_create_view(request, id=None):
     if form.is_valid():
         article_object = form.save()
         context['form'] = ArticleForm()
+        return redirect(article_object.get_absolute_url())
     return render(request , 'articles/create.html', context=context)
 
 
