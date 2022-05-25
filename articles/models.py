@@ -1,5 +1,6 @@
 from operator import mod
 from django.db import models
+from django.urls import reverse
 from .utils import slugify_instance_title
 from django.db.models.signals import pre_save, post_save
 # Create your models here.
@@ -12,7 +13,7 @@ class Article(models.Model):
     published = models.DateField(auto_now_add=False,auto_now=False , null=True, blank=True)
 
     def get_absolute_url(self):
-        return f'/articles/{self.slug}'
+        return reverse('article-details', kwargs={'slug':self.slug})
         
     def save(self, *args , **kwargs):
         # if self.slug == None:
