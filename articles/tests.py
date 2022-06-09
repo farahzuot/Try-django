@@ -49,3 +49,11 @@ class ArticleTestCase(TestCase):
         self.assertEqual(len(slug_list),len(uniqueSlug))
 
     # def test_user_added_slug_unique(self):
+
+    def test_search_article_manager(self):
+        qs = Article.objects.search(query='hello world')
+        self.assertEqual(qs.count(), self.numbers_of_articles)
+        qs = Article.objects.search(query='hello')
+        self.assertEqual(qs.count(), self.numbers_of_articles)
+        qs = Article.objects.search(query='content field')
+        self.assertEqual(qs.count(), self.numbers_of_articles)
