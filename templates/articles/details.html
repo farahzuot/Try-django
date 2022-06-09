@@ -2,6 +2,7 @@
 
 {% block content %}
 <h1>{{ object.title }}</h1>
+<h2>Author : {{object.user}} {% if request.user == object.user%}THIS IS YOU!!! {% endif %}</h2>
 <p>{{ object.content }}</p>
 
 <a href="{% url 'home' %}">Home</a>
