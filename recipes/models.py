@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 from .validators import validate_unit_of_measure
 from .utils import number_str_to_float
+import pint
 # Create your models here.
 
 class Recipe(models.Model):
@@ -24,6 +25,23 @@ class RecipeIngredient(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     active = models.BooleanField(default=True)
+
+    def convert_to_system(self, system='mks'):
+        ureg = pint.UnitRegistry(system=system)
+        if self.quantity_as_float is None:
+            self.quantity_as_float = ''
+        measurements = self.quantity_as_float * ureg[self.unit]
+        return measurements.to_base_units()
+
+    def as_mks(self):
+        measurements = self.convert_to_system('mks')
+        return measurements.to_base_units()
+
+
+    def as_imperial(self):
+        measurements = self.convert_to_system('imperial')
+        return measurements.to_base_units()
+
 
     def save(self,*args,**kwargs):
         qty = self.quantity
