@@ -1,5 +1,5 @@
 from django.test import TestCase
-
+from django.core.exceptions import ValidationError
 from django.contrib.auth import get_user_model
 from .models import Recipe, RecipeIngredient
 # Create your tests here.
@@ -61,3 +61,25 @@ class RecipeTestCase(TestCase):
         user = self.user_a
         qs = RecipeIngredient.objects.filter(recipe__user=user)
         self.assertEqual(qs.count(),1)
+    
+    def test_unit_measure_validation(self):
+        valid_unit = 'ounce'
+        ingredient = RecipeIngredient(
+            name = 'chicken',
+            quantity = 10,
+            recipe = self.recipe_a,
+            unit = valid_unit
+        )
+        ingredient.full_clean()
+
+    def test_unit_measure_validation_error(self):
+        unvalid_unit = ['nada','lullya','dsl']
+        with self.assertRaises(ValidationError):
+            for u in unvalid_unit:
+                ingredient = RecipeIngredient(
+                    name = 'chicken',
+                    quantity = 10,
+                    recipe = self.recipe_a,
+                    unit = u
+                )
+                ingredient.full_clean()
