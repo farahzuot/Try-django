@@ -5,5 +5,6 @@ from .models import Article
 class ArticleAdmin(admin.ModelAdmin):
     list_display = ['id','title','slug', 'timestamp', 'updated', 'published']
     search_fields = ['title','content']
+    raw_id_fields = ['user']
 
 admin.site.register(Article,ArticleAdmin)
