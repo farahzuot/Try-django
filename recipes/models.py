@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from django.urls import reverse
 from .validators import validate_unit_of_measure
 from .utils import number_str_to_float
 import pint
@@ -14,6 +15,10 @@ class Recipe(models.Model):
     updated = models.DateTimeField(auto_now=True)
     active = models.BooleanField(default=True)
 
+    def get_absolute_url(self):
+        return reverse('recipes:details', kwargs={'id':self.id})
+
+
 class RecipeIngredient(models.Model):
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
     name = models.CharField(max_length=220)
@@ -25,6 +30,10 @@ class RecipeIngredient(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     active = models.BooleanField(default=True)
+
+    def get_absolute_url(self):
+        return self.recipe.get_absolute_url()
+
 
     def convert_to_system(self, system='mks'):
         ureg = pint.UnitRegistry(system=system)
