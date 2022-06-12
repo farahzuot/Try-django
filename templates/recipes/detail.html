@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>{{ object.name }} {% if object.get_update_url %}<small><a href="{{ object.get_update_url }}">Edit</a></small>{% endif %}</h1>
+<p>{{ object.description }}</p>
+<p>{{ object.directions }}</p>
+
+{% for ingredient in object.get_ingredients_qs %}
+    <h3>{{ingredient.name}}</h3>
+    <p>{{ ingredient.as_mks }}</p>
+    <p>{{ ingredient.as_imperial }}</p>
+{% endfor %}
+
+<a href="{% url 'home' %}">Home</a>
+{% endblock content %}
+

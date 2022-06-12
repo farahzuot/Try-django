@@ -16,8 +16,13 @@ class Recipe(models.Model):
     active = models.BooleanField(default=True)
 
     def get_absolute_url(self):
-        return reverse('recipes:details', kwargs={'id':self.id})
+        return reverse('recipes:detail', kwargs={'id':self.id})
 
+    def get_update_url(self):
+        return reverse('recipes:update', kwargs={'id':self.id})
+
+    def get_ingredients_qs(self):
+        return self.recipeingredient_set.all()
 
 class RecipeIngredient(models.Model):
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
@@ -33,7 +38,6 @@ class RecipeIngredient(models.Model):
 
     def get_absolute_url(self):
         return self.recipe.get_absolute_url()
-
 
     def convert_to_system(self, system='mks'):
         ureg = pint.UnitRegistry(system=system)
