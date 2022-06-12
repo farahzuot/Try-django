@@ -1,8 +1,9 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<a href="{% url 'articles:create' %}">Create Article</a>
-<a href="{% url 'articles:detail' slug='hello-world' %}">Hello world article</a>
+<a href="{% url 'recipes:list' %}">Recipes</a>
+<a href="{% url 'articles:create' %}">Articles</a>
+<!-- <a href="{% url 'articles:detail' slug='hello-world' %}">Hello world article</a> -->
 <ul>
     {% for x in object_qs %}
     {% if x.title %}
@@ -10,4 +11,5 @@
     {% endif %}
     {% endfor %}
 </ul>
+
 {% endblock content %}

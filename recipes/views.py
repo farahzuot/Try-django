@@ -3,6 +3,8 @@ from django.shortcuts import render , redirect , get_object_or_404
 from .models import Recipe
 from .forms import RecipeForm
 # Create your views here.
+# CRUD -> Create, Retrieve, Update, Delete.
+# FBV (Function based view) this may have much redundant code. -> CBS (Class based view)
 
 @login_required
 def recipe_list_view(request):
