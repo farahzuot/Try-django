@@ -3,7 +3,9 @@ from .models import Recipe, RecipeIngredient
 
 class RecipeForm(forms.ModelForm):
     # django-crispy-forms >> library to do this work and clean up the form.
-    # name = forms.CharField(widget=forms.TextInput(attrs={'class':'name-field'}))
+    error_css_class = 'error-field'
+    required_css_class = 'required-field'
+    name = forms.CharField(help_text='This is your help! <a href="/contact-us">Contact Us</a>')
     class Meta:
         model = Recipe
         fields = ['name', 'description' , 'directions']
