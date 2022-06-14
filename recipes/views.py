@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render , redirect , get_object_or_404
-from .models import Recipe
+from django.forms.models import modelformset_factory # model form for queryset.
+from .models import Recipe, RecipeIngredient
 from .forms import RecipeForm , RecipeIngredientForm
 # Create your views here.
 # CRUD -> Create, Retrieve, Update, Delete.
@@ -44,18 +45,25 @@ def recipe_update_view(request,id=None):
     obj = get_object_or_404(Recipe, id=id, user=request.user)
     form = RecipeForm(request.POST or None, instance=obj)
     form_2 = RecipeIngredientForm(request.POST or None)
+    # formset = modelformset_factory(model, form=ModelForm , extra=0)
+    RecipeIngredientFormset = modelformset_factory(RecipeIngredient, form=RecipeIngredientForm
+     , extra=0)
+    qs = obj.recipeingredient_set.all()
+    formset = RecipeIngredientFormset(request.POST or None, queryset=qs)
     context = {
         'form': form,
-        'form_2' : form_2,
+        'formset' : formset,
         'object': obj,
     }
-    if all([form.is_valid(), form_2.is_valid()]):
+    if all([form.is_valid() , formset.is_valid()]):
         # if the forms were'nt associated (do not have inner relation), then only make commit = true and this will save the data.
         parent = form.save(commit=False)
         parent.save()
-        child = form_2.save(commit=False)
-        child.recipe = parent
-        child.save()
+        for form in formset:
+            child = form.save(commit=False)
+            if child.recipe is None:
+                child.recipe = parent
+            child.save()
         context['message'] = 'Data saved.'
 
     return render(request, 'recipes/create-update.html' , context=context)
