@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render , redirect , get_object_or_404
 from .models import Recipe
-from .forms import RecipeForm
+from .forms import RecipeForm , RecipeIngredientForm
 # Create your views here.
 # CRUD -> Create, Retrieve, Update, Delete.
 # FBV (Function based view) this may have much redundant code. -> CBS (Class based view)
@@ -29,6 +29,7 @@ def recipe_create_view(request):
         'form': form,
     }
     if form.is_valid():
+        # commit = false, means do not save the data to DB.
         obj = form.save(commit=False)
         obj.user = request.user #since we have @login_required
         obj.save()
@@ -42,12 +43,19 @@ def recipe_create_view(request):
 def recipe_update_view(request,id=None):
     obj = get_object_or_404(Recipe, id=id, user=request.user)
     form = RecipeForm(request.POST or None, instance=obj)
+    form_2 = RecipeIngredientForm(request.POST or None)
     context = {
         'form': form,
+        'form_2' : form_2,
         'object': obj,
     }
-    if form.is_valid():
-        form.save()
+    if all([form.is_valid(), form_2.is_valid()]):
+        # if the forms were'nt associated (do not have inner relation), then only make commit = true and this will save the data.
+        parent = form.save(commit=False)
+        parent.save()
+        child = form_2.save(commit=False)
+        child.recipe = parent
+        child.save()
         context['message'] = 'Data saved.'
 
     return render(request, 'recipes/create-update.html' , context=context)
