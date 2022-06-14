@@ -5,6 +5,9 @@
     .ingredient-form{
         border-bottom: 1px solid black;
     }
+    .hidden{
+        display: none;
+    }
 </style>
 {% if message %}
 <p>{{message}}</p>
@@ -26,15 +29,41 @@
         {% if formset %}
         <h3>Ingredients</h3>
         {{ formset.management_form }}
-        {% for form in formset %}
-            <div class="ingredient-form">
-                {{form.as_p}}
-
-            </div>
-        {% endfor %}
+        <div id="ingredient-form-list">
+            {% for form in formset %}
+                <div class="ingredient-form">
+                    {{form.as_p}}
+                </div>
+            {% endfor %}
+        </div>
+        <div id="empty-form" class="hidden">{{formset.empty_form.as_p}}</div>
+        <button id="add-ingredient-btn" type="button">Add ingredient</button>
         {% endif %}
         <button style="margin-top:10px;" type="submit">Save</button>
     </form>
 </div>
+
+<script>
+const addIngreientBtn = document.getElementById('add-ingredient-btn')
+const container = document.getElementById('ingredient-form-list')
+addIngreientBtn.addEventListener('click',addNewForm)
+
+function addNewForm(event){
+    if(event){
+        event.preventDefault();
+    }
+    const ingredientForm = document.getElementsByClassName('ingredient-form')
+    const count = ingredientForm.length
+    const totalFormCounts = document.getElementById('id_form-TOTAL_FORMS')
+    clonedEmptyForm = document.getElementById('empty-form').cloneNode(true)
+    clonedEmptyForm.setAttribute('class','ingredient-form')
+    clonedEmptyForm.setAttribute('id',`form-${count}`)
+    const pattern = new RegExp('__prefix__','g')
+    clonedEmptyForm.innerHTML = clonedEmptyForm.innerHTML.replace(pattern,count)
+    totalFormCounts.setAttribute('value',count+1)
+    container.append(clonedEmptyForm)
+}
+
+</script>
 
 {% endblock content %}
